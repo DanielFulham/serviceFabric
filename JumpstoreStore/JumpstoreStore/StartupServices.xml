@@ -2,10 +2,10 @@
 <StartupServicesManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="MinReplicaSetSize" DefaultValue="3" />
-    <Parameter Name="PartitionCount" DefaultValue="1" />
+    <Parameter Name="PartitionCount" DefaultValue="3" />
     <Parameter Name="TargetReplicaSetSize" DefaultValue="3" />
     <Parameter Name="PartitionLowKey" DefaultValue="0" />
-    <Parameter Name="PartitionHighKey" DefaultValue="0" />
+    <Parameter Name="PartitionHighKey" DefaultValue="2" />
   </Parameters>
   <Services>
     <!-- The section below creates instances of service types, when an instance of this 
@@ -15,6 +15,15 @@
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
     <Service Name="ProductCatalogue" ServicePackageActivationMode="ExclusiveProcess">
       <StatefulService ServiceTypeName="ProductCatalogueType" TargetReplicaSetSize="[TargetReplicaSetSize]" MinReplicaSetSize="[MinReplicaSetSize]">
+        <!--<NamedPartition>
+          <Partition Name="USA" />
+          -->
+        <!--<Partition Name="EU"/>-->
+        <!--
+          -->
+        <!--<Partition Name="Japan"/>-->
+        <!--
+        </NamedPartition>-->
         <UniformInt64Partition PartitionCount="[PartitionCount]" LowKey="[PartitionLowKey]" HighKey="[PartitionHighKey]" />
       </StatefulService>
     </Service>
