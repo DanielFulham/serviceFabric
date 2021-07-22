@@ -7,17 +7,29 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Communication;
+using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 
 namespace ProductCatalogue
 {
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    internal sealed class ProductCatalogue : StatefulService
+    internal sealed class ProductCatalogue : StatefulService, IStatefulInterface
     {
         public ProductCatalogue(StatefulServiceContext context)
             : base(context)
         { }
+
+        public async Task<string> GetServiceDetails() // Has to be async
+        {
+            var serviceName = this.Context.ServiceName.ToString();
+
+            var partitionId = this.Context.PartitionId.ToString();
+
+            return $"{serviceName} ::: {partitionId}";
+            //throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
@@ -28,7 +40,8 @@ namespace ProductCatalogue
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            return new ServiceReplicaListener[0];
+            return this.CreateServiceRemotingReplicaListeners();
+            //return new ServiceReplicaListener[0];
         }
 
         /// <summary>
