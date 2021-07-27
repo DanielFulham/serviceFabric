@@ -11,5 +11,9 @@ namespace Communication
         Task<Product> GetProductById(int id);
 
         Task AddProduct(Product product);
+
+        Task<Product> GetFromQueue();
+
+        Task AddToQueue(Product product);
     }
 }

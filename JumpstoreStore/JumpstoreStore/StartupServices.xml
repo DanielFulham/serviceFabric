@@ -27,15 +27,15 @@
     </Service>
     <Service Name="ProductCatalogue" ServicePackageActivationMode="ExclusiveProcess">
       <StatefulService ServiceTypeName="ProductCatalogueType" TargetReplicaSetSize="[TargetReplicaSetSize]" MinReplicaSetSize="[MinReplicaSetSize]">
-        <!--
-        </NamedPartition>-->
-        <!--<Partition Name="Japan"/>-->
-        <!--
-          -->
-        <!--<Partition Name="EU"/>-->
         <!--<NamedPartition>
           <Partition Name="USA" />
           -->
+        <!--<Partition Name="EU"/>-->
+        <!--
+          -->
+        <!--<Partition Name="Japan"/>-->
+        <!--
+        </NamedPartition>-->
         <UniformInt64Partition PartitionCount="3" LowKey="0" HighKey="2" />
         <!--<UniformInt64Partition PartitionCount="[PartitionCount]" LowKey="[PartitionLowKey]" HighKey="[PartitionHighKey]" />-->
       </StatefulService>

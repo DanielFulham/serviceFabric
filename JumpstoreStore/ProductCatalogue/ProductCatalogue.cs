@@ -21,6 +21,41 @@ namespace ProductCatalogue
             : base(context)
         { }
 
+        // gets lateat object on queue each time
+        public async Task<Product> GetFromQueue()
+        {
+            var stateManager = this.StateManager;
+
+            var productQueue = await stateManager.GetOrAddAsync<IReliableQueue<Product>>("productqueue");
+
+            using (var tx = stateManager.CreateTransaction())
+            {
+                var product = await productQueue.TryDequeueAsync(tx);
+
+                await tx.CommitAsync();
+
+                //Assuming the value is there
+                return product.Value;
+            }
+
+            //Can be handled better
+            throw new Exception();
+        }
+
+        public async Task AddToQueue(Product product)
+        {
+            var stateManager = this.StateManager;
+
+            var productQueue = await stateManager.GetOrAddAsync<IReliableQueue<Product>>("productqueue");
+
+            using (var tx = stateManager.CreateTransaction())
+            {
+                await productQueue.EnqueueAsync(tx, product);
+
+                await tx.CommitAsync();
+            }
+        }
+
         public async Task<Product> GetProductById(int id)
         {
             var stateManager = this.StateManager;

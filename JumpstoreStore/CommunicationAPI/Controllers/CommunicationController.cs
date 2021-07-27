@@ -38,6 +38,34 @@ namespace CommunicationAPI.Controllers
             await statefulProxy.AddProduct(product);
         }
 
+        [HttpPost]
+        [Route("addtoqueue")]
+        public async Task AddToQueue(
+            [FromQuery] int partitionId,
+            [FromBody] Product product)
+        {
+            var statefulProxy = ServiceProxy.Create<IStatefulInterface>(
+                new Uri("fabric:/JumpstoreStore/ProductCatalogue"),
+                new Microsoft.ServiceFabric.Services.Client.ServicePartitionKey(partitionId)); // Should pass a proxy
+
+            // Add product
+            await statefulProxy.AddToQueue(product);
+        }
+
+        [HttpGet]
+        [Route("getfromqueue")]
+        public async Task<Product> GetFromQueue(
+            [FromQuery] int partitionId)
+        {
+            var statefulProxy = ServiceProxy.Create<IStatefulInterface>(
+                new Uri("fabric:/JumpstoreStore/ProductCatalogue"),
+                new Microsoft.ServiceFabric.Services.Client.ServicePartitionKey(partitionId));
+
+            var product = await statefulProxy.GetFromQueue();
+
+            return product;
+        }
+
         [HttpGet]
         [Route("getproduct")]
         public async Task<Product> GetProduct(
