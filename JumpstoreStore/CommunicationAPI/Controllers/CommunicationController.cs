@@ -15,14 +15,45 @@ namespace CommunicationAPI.Controllers
         public async Task<string> StatelessGet()
         {
             var statelessProxy = ServiceProxy.Create<IStatelessInterface>(
-                new System.Uri("fabric:/JumpstoreStore/CustomerAnalytics"));
+                new Uri("fabric:/JumpstoreStore/CustomerAnalytics"));
 
             // This is why the method should be async 
             var serviceName = await statelessProxy.GetServiceDetails(); // Should return service name
 
             return serviceName;
         }
-        
+
+        [HttpPost]
+        [Route("addproduct")]
+        public async Task AddProduct(
+            [FromBody] Product product)
+        {
+            var partitionId = product.Id % 3; // % 3 to proxy in
+
+            var statefulProxy = ServiceProxy.Create<IStatefulInterface>(
+                new Uri("fabric:/JumpstoreStore/ProductCatalogue"),
+                new Microsoft.ServiceFabric.Services.Client.ServicePartitionKey(partitionId)); // Should pass a proxy
+
+            // Add product
+            await statefulProxy.AddProduct(product);
+        }
+
+        [HttpGet]
+        [Route("getproduct")]
+        public async Task<Product> GetProduct(
+            [FromQuery] int productId)
+        {
+            var partitionId = productId % 3;
+
+            var statefulProxy = ServiceProxy.Create<IStatefulInterface>(
+                new Uri("fabric:/JumpstoreStore/ProductCatalogue"),
+                new Microsoft.ServiceFabric.Services.Client.ServicePartitionKey(partitionId));
+
+            var product = await statefulProxy.GetProductById(productId);
+
+            return product;
+        }
+
         [HttpGet]
         [Route("stateful")]
         public async Task<string> StatefulGet(

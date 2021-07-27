@@ -7,5 +7,9 @@ namespace Communication
     {
         //Have to be asynchroinous so a task
         Task<string> GetServiceDetails();
+
+        Task<Product> GetProductById(int id);
+
+        Task AddProduct(Product product);
     }
 }
