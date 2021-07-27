@@ -26,13 +26,14 @@ namespace CommunicationAPI.Controllers
         [HttpGet]
         [Route("stateful")]
         public async Task<string> StatefulGet(
-            [FromQuery] string region)
+            [FromQuery] int productId)
         {
+            var partitionId = productId % 3;
 
             // Wont pick up the region here as the settings to specify the partition name does not work
             var statefulProxy = ServiceProxy.Create<IStatefulInterface>(
-                new Uri("fabric:/JumpstoreStore/ProductCatalogue")); //, //
-                //new Microsoft.ServiceFabric.Services.Client.ServicePartitionKey(region.ToUpperInvariant())); // Should pass a proxy
+                new Uri("fabric:/JumpstoreStore/ProductCatalogue"), //, //
+                new Microsoft.ServiceFabric.Services.Client.ServicePartitionKey(partitionId)); // Should pass a proxy
 
             // This is why the method should be async 
             var serviceName = await statefulProxy.GetServiceDetails(); // Should return service name and partition id
