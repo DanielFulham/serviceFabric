@@ -50,6 +50,26 @@ namespace ProductActorService
             return product;
         }
 
+        protected override Task OnPostActorMethodAsync(ActorMethodContext actorMethodContext)
+        {
+            ActorEventSource.Current.ActorMessage(this, $"{actorMethodContext.MethodName} has finished");
+
+            return base.OnPostActorMethodAsync(actorMethodContext);
+        }
+        protected override Task OnPreActorMethodAsync(ActorMethodContext actorMethodContext)
+        {
+            ActorEventSource.Current.ActorMessage(this, $"{actorMethodContext.MethodName} will start soon");
+
+            return base.OnPreActorMethodAsync(actorMethodContext);
+        }
+
+        protected override Task OnDeactivateAsync()
+        {
+            ActorEventSource.Current.ActorMessage(this, "Actor deactivated.");
+
+            return base.OnDeactivateAsync();
+        }
+
         /// <summary>
         /// This method is called whenever an actor is activated.
         /// An actor is activated the first time any of its methods are invoked.

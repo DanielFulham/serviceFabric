@@ -40,5 +40,22 @@ namespace ProductApi.Controllers
 
             await proxy.AddProductAsync(product, new CancellationToken());
         }
+
+        [HttpDelete]
+        public async Task DeleteActorById(
+            [FromQuery] int id)
+        {
+            var actorId = new ActorId(id);
+
+            // we'#re connecting to actor service, not the actor here
+
+            var actorServiceProxy = ActorServiceProxy.Create(new Uri("fabric:/ProductActorApplication/ProductActorServiceActorService"),
+                actorId);
+
+            // This is an expensive operation. Maybe it could be done every so often (once a week).
+            // or maybe some business logic against a threashold
+            await actorServiceProxy.DeleteActorAsync(actorId, new CancellationToken());
+        }
+
     }
 }
