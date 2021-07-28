@@ -20,11 +20,12 @@ namespace ProductActorService
     ///  - None: State is kept in memory only and not replicated.
     /// </remarks>
     [StatePersistence(StatePersistence.Persisted)]
-    internal class ProductActorService : Actor, IProductActorService //, IProductActorService
+    internal class ProductActorService : Actor, IProductActorService, IRemindable //, IProductActorService
     {
         //So this could be Everton V United
         private string ProductStateName = "ProductState";
 
+        private IActorTimer _actorTimer;
 
         /// <summary>
         /// Initializes a new instance of ProductActorService
@@ -34,6 +35,7 @@ namespace ProductActorService
         public ProductActorService(ActorService actorService, ActorId actorId) 
             : base(actorService, actorId)
         {
+
         }
 
         public async Task AddProductAsync(Product product, CancellationToken cancellationToken)
@@ -65,6 +67,11 @@ namespace ProductActorService
 
         protected override Task OnDeactivateAsync()
         {
+            //if (_actorTimer != null)
+            //{
+            //    UnregisterTimer(_actorTimer);
+            //}
+
             ActorEventSource.Current.ActorMessage(this, "Actor deactivated.");
 
             return base.OnDeactivateAsync();
@@ -76,7 +83,15 @@ namespace ProductActorService
         /// </summary>
         protected override Task OnActivateAsync()
         {
-            ActorEventSource.Current.ActorMessage(this, "Actor activated.");
+            this.RegisterReminderAsync("TaskReminder", null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(15));
+
+            //_actorTimer = RegisterTimer(
+            //    DoWork,
+            //    null,
+            //    TimeSpan.FromSeconds(10),
+            //    TimeSpan.FromSeconds(150));
+
+            //ActorEventSource.Current.ActorMessage(this, "Actor activated.");
 
             // The StateManager is this actor's private state store.
             // Data stored in the StateManager will be replicated for high-availability for actors that use volatile or persisted state storage.
@@ -84,6 +99,24 @@ namespace ProductActorService
             // For more information, see https://aka.ms/servicefabricactorsstateserialization
 
             return this.StateManager.TryAddStateAsync("count", 0);
+        }
+
+        private async Task DoWork(object work)
+        {
+            // Below is an example of how these functions can be detrimental to halt the actor performing tasks using the time.
+            await Task.Delay(TimeSpan.FromSeconds(100));
+
+            ActorEventSource.Current.ActorMessage(this, $"Actor is doing work");
+
+            // return Task.CompletedTask;
+        }
+
+        public async Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
+        {
+            if (reminderName == "TaskReminder")
+            {
+                ActorEventSource.Current.ActorMessage(this, $"Reminder is doing work");
+            }
         }
 
         ///// <summary>
