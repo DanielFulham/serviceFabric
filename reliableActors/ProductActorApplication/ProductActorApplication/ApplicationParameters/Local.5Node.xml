@@ -2,5 +2,6 @@
 <Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/ProductActorApplication" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="ProductApi_ASPNETCORE_ENVIRONMENT" Value="Development" />
+    <Parameter Name="DbConfig" Value="FiveNode" />
   </Parameters>
 </Application>

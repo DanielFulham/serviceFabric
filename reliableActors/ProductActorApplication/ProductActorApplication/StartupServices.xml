@@ -5,6 +5,7 @@
     <Parameter Name="ProductActorServiceActorService_PartitionCount" DefaultValue="10" />
     <Parameter Name="ProductActorServiceActorService_MinReplicaSetSize" DefaultValue="3" />
     <Parameter Name="ProductActorServiceActorService_TargetReplicaSetSize" DefaultValue="3" />
+    <!--<Parameter Name="DbConfig" DefaultValue="" />-->
   </Parameters>
   <Services>
     <Service Name="ProductApi" ServicePackageActivationMode="ExclusiveProcess">

@@ -8,4 +8,7 @@
     <Parameter Name="CredentialType" Value="None" />
   </Section>
   <!-- The content will be generated during build -->
+  <Section Name="Database">
+    <Parameter Name="DbConfig" Value="" />
+  </Section>
 </Settings>
